@@ -65,6 +65,63 @@ describe("Scope", function() {
 			expect(scope.counter).toBe(2); 
 
 		});
+
+		it("call listener when watch value is first undefined", function() {
+			scope.watchValue = undefined;
+			scope.counter = 0;
+
+			scope.$watch(
+				function(scope) {
+					return scope.watchValue;
+			},
+				function() {
+					scope.counter++;
+			});
+
+			scope.$digest();
+			expect(scope.counter).toBe(1);
+		});
+
+		it("calls listener with new value as old value the first time", function() {
+			scope.watchValue = 123;
+			var oldValueTest;
+
+			scope.$watch(
+				function() {
+					return scope.watchValue;
+				},
+				function(newValue, oldValue, self) {
+					oldValueTest = oldValue;
+				}
+			);
+
+			scope.$digest();
+			expect(oldValueTest).toBe(123);
+		});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	});
 
 });

@@ -1,6 +1,8 @@
 /* jshint globalstrict: true */
 "use strict";
 
+function initWatchValue() {}
+
 function Scope () {
 	this.$$watchers = [];
 }
@@ -9,21 +11,23 @@ Scope.prototype = {
 	$watch: function(watchFn, listenerFn) {
 		var watcher = {
 			watchFn: watchFn,
-			listenerFn: listenerFn	
+			listenerFn: listenerFn,
+			last: initWatchValue	
 		};
 		this.$$watchers.push(watcher);
 	},
 	$digest: function() {
 		var self = this,
 				newValue, 
-				oldVaue;
+				oldValue;
 
 		_.forEach(this.$$watchers, function(watcher) {
 			newValue = watcher.watchFn(self);
-			oldVaue = watcher.last;
-			if(newValue != oldVaue) {
+			oldValue = watcher.last;
+			if(newValue != oldValue) {
 				watcher.last = newValue;
-				watcher.listenerFn(newValue, oldVaue, self);
+				oldValue = (oldValue === initWatchValue ? newValue : oldValue);
+				watcher.listenerFn(newValue, oldValue, self);
 			}
 		});
 	}
