@@ -66,7 +66,7 @@ describe("Scope", function() {
 
 		});
 
-		it("call listener when watch value is first undefined", function() {
+		it("calls listener when watch value is first undefined", function() {
 			scope.watchValue = undefined;
 			scope.counter = 0;
 
@@ -97,6 +97,14 @@ describe("Scope", function() {
 
 			scope.$digest();
 			expect(oldValueTest).toBe(123);
+		});
+
+		it("may have watchers that don't have listener function", function() {
+			scope.watchFn = jasmine.createSpy().and.returnValue('something');
+			scope.$watch(scope.watchFn);
+
+			scope.$digest();
+			expect(scope.watchFn).toHaveBeenCalled();
 		});
 
 
