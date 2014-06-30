@@ -107,6 +107,37 @@ describe("Scope", function() {
 			expect(scope.watchFn).toHaveBeenCalled();
 		});
 
+		it("stays in digests until all watchers are not dirty", function() {
+			scope.name = 'Jane';
+
+			scope.$watch(
+				function(scope) {
+					return scope.upperName;
+				},
+				function(newValue, oldValue, scope) {
+					if (newValue) {
+						scope.firstLetter = newValue.substring(0,1) + '.';
+					}
+				}
+			)
+
+			scope.$watch(
+				function(scope) {
+					return scope.name;
+				},
+				function(newValue, oldValue, scope) {
+					scope.upperName = scope.name.toUpperCase();
+				}
+			)
+
+			scope.$digest();
+			expect(scope.firstLetter).toBe('J.');
+
+			scope.name = 'Bob';
+			scope.$digest();
+			expect(scope.firstLetter).toBe('B.');
+		});
+
 
 
 
