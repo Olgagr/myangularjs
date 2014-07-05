@@ -138,7 +138,30 @@ describe("Scope", function() {
 			expect(scope.firstLetter).toBe('B.');
 		});
 
+		it("throws an error after 10 iterations if there are still changes", function() {
+			scope.counterOne = 0;
+			scope.counterTwo = 0;
 
+			scope.$watch(
+				function(scope) {
+					return scope.counterOne;
+				},
+				function(newValue, oldValue, scope) {
+					scope.counterTwo++;
+				}
+			)
+
+			scope.$watch(
+				function(scope) {
+					return scope.counterTwo
+				},
+				function(newValue, oldValue, scope) {
+					scope.counterOne++;
+				}
+			)
+
+			expect((function() {scope.$digest()})).toThrow();
+		})
 
 
 
