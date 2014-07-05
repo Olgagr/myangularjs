@@ -16,6 +16,7 @@ Scope.prototype = {
 			last: initWatchValue	
 		};
 		this.$$watchers.push(watcher);
+		this.$$lastDirtyWatch = null;
 	},
 	$$digestOnce: function() {
 		var self = this,

@@ -185,6 +185,29 @@ describe("Scope", function() {
 			expect(watchExecution).toBe(301);
 		});
 
+		it("does not run digest so the new watchers are not run", function() {
+			scope.someValue = 'abc';
+			scope.counter = 0;
+
+			scope.$watch(
+				function(scope) {
+					return scope.someValue;
+				},
+				function(newValue, oldValue, scope) {
+					scope.$watch(
+						function(scope) {
+							return scope.someValue;
+						},
+						function(newValue, oldValue, scope) {
+							scope.counter++;
+						}
+					)
+				}
+			);
+
+			scope.$digest();
+			expect(scope.counter).toBe(1);
+		});
 
 
 
