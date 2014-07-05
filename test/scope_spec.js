@@ -161,8 +161,29 @@ describe("Scope", function() {
 			)
 
 			expect((function() {scope.$digest()})).toThrow();
-		})
+		});
 
+		it("ends the digest when the last watch is clean", function() {
+			scope.array = _.range(100);
+			var watchExecution = 0;
+
+			_.times(100, function(i) {
+				scope.$watch(
+					function(scope) {
+						watchExecution++;
+						return scope.array[i];
+					},
+					function(newValue, oldValue, scope) {}
+				)
+			});
+
+			scope.$digest();
+			expect(watchExecution).toBe(200);
+
+			scope.array[0] = 420;
+			scope.$digest();
+			expect(watchExecution).toBe(301);
+		});
 
 
 
