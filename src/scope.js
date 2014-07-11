@@ -13,7 +13,7 @@ Scope.prototype = {
 		if(valueCheck) {
 			return _.isEqual(newValue, oldValue);
 		} else {
-			return newValue === oldValue;
+			return newValue === oldValue || (typeof newValue === 'number' && typeof oldValue === 'number' && isNaN(newValue) && isNaN(oldValue));
 		}
 	},
 	$watch: function(watchFn, listenerFn, valueCheck) {
