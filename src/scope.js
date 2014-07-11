@@ -9,10 +9,18 @@ function Scope () {
 }
 
 Scope.prototype = {
-	$watch: function(watchFn, listenerFn) {
+	$$areEqual: function(newValue, oldValue, valueCheck) {
+		if(valueCheck) {
+			return _.isEqual(newValue, oldValue);
+		} else {
+			return newValue === oldValue;
+		}
+	},
+	$watch: function(watchFn, listenerFn, valueCheck) {
 		var watcher = {
 			watchFn: watchFn,
 			listenerFn: listenerFn || function() {},
+			valueCheck: !!valueCheck,
 			last: initWatchValue	
 		};
 		this.$$watchers.push(watcher);
@@ -27,9 +35,10 @@ Scope.prototype = {
 		_.forEach(this.$$watchers, function(watcher) {
 			newValue = watcher.watchFn(self);
 			oldValue = watcher.last;
-			if(newValue != oldValue) {
-				watcher.last = newValue;
+
+			if(!self.$$areEqual(newValue, oldValue, watcher.valueCheck)) {
 				self.$$lastDirtyWatch = watcher;
+				watcher.last = (watcher.valueCheck ? _.cloneDeep(newValue) : newValue);
 				oldValue = (oldValue === initWatchValue ? newValue : oldValue);
 				watcher.listenerFn(newValue, oldValue, self);
 				dirty = true;

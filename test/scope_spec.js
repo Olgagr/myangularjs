@@ -209,6 +209,26 @@ describe("Scope", function() {
 			expect(scope.counter).toBe(1);
 		});
 
+		it("does dirty checking by value if special paramater is set to true", function() {
+			scope.someValue = [1,2,3],
+			scope.counter = 0;
+
+			scope.$watch(
+				function() { return scope.someValue },
+				function(newValue, oldValue, scope) {
+					scope.counter++;
+				},
+				true	
+			);
+
+			scope.$digest();
+			expect(scope.counter).toBe(1);
+
+			scope.someValue.push(4);
+			scope.$digest();
+			expect(scope.counter).toBe(2);  
+
+		});	
 
 
 
