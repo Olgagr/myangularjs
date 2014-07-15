@@ -249,24 +249,36 @@ describe("Scope", function() {
 			scope.$digest();
 			expect(scope.counter).toBe(1);
 		});
+		
+	});
 
+	describe("$eval", function() {
+		
+		var scope;
 
+		beforeEach(function() {
+			scope = new Scope();
+		});
 
+		it("executes function in context of scope and returns results", function() {
+			scope.someValue = 1
 
+			var result = scope.$eval(function(scope) {
+				return scope.someValue;
+			});
 
+			expect(result).toBe(1);
+		});
 
+		it("passes second $eval argument straight through", function() {
+			scope.someValue = 1;
 
+			var result = scope.$eval(function(scope, arg) {
+				return scope.someValue + arg;
+			}, 2);
 
-
-
-
-
-
-
-
-
-
-
+			expect(result).toBe(3);
+		});
 
 	});
 
