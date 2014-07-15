@@ -12,6 +12,13 @@ Scope.prototype = {
 	$eval: function(expr, locals) {
 		return expr(this, locals);
 	},
+	$apply: function(expr) {
+		try {
+			this.$eval(expr);
+		} finally {
+			this.$digest();
+		}
+	},
 	$$areEqual: function(newValue, oldValue, valueCheck) {
 		if(valueCheck) {
 			return _.isEqual(newValue, oldValue);

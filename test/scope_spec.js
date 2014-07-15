@@ -249,7 +249,7 @@ describe("Scope", function() {
 			scope.$digest();
 			expect(scope.counter).toBe(1);
 		});
-		
+
 	});
 
 	describe("$eval", function() {
@@ -278,6 +278,39 @@ describe("Scope", function() {
 			}, 2);
 
 			expect(result).toBe(3);
+		});
+
+	});
+
+	describe("$apply", function() {
+
+		var scope;
+
+		beforeEach(function() {
+			scope = new Scope();
+		});
+		
+		it("executes $apply'ed function in context of scope and runs digest", function() {
+			scope.someValue = 1;
+			scope.counter = 0;
+
+			scope.$watch(
+				function(scope) {
+					return scope.someValue;
+				},
+				function(newValue, oldValue, scope) {
+					scope.counter++;
+				}
+			);
+
+			scope.$digest();
+			expect(scope.counter).toBe(1);
+
+			scope.$apply(function(scope) {
+				scope.someValue = 2;
+			});	
+
+			expect(scope.counter).toBe(2);
 		});
 
 	});
