@@ -282,6 +282,36 @@ describe("Scope", function() {
 
 	});
 
+	describe('$evalAsync', function() {
+
+		var scope;
+
+		beforeEach(function() {
+			scope = new Scope();
+		});
+
+		it('executes $evalAsync function later in the same $digest cycle', function() {
+			scope.someValue = [1,2,3];
+			scope.asyncedCalled = false;
+			scope.asyncedCalledImmediately = false;
+
+			scope.$watch(function() {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.$evalAsync(function(scope) {
+					scope.asyncedCalled = true;
+				});
+				scope.asyncedCalledImmediately = scope.asyncedCalled;	
+			});
+
+			scope.$digest();
+			expect(scope.asyncedCalled).toBe(true);
+			expect(scope.asyncedCalledImmediately).toBe(false);
+
+		});
+
+	});
+
 	describe("$apply", function() {
 
 		var scope;
