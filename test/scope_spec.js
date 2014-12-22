@@ -310,6 +310,49 @@ describe("Scope", function() {
 
 		});
 
+		it('has a $$phase field whose value is the current digest phrase', function() {
+			scope.aValue = [1,2,3];
+			scope.phaseInWatchFunction = undefined;
+			scope.phaseInListenerFunction = undefined;
+			scope.phaseInApplyFunction = undefined;
+
+			scope.$watch(function(scope) {
+				scope.phaseInWatchFunction = scope.$$phase;
+				return scope.aValue;
+			}, function(newValue, oldValue, scope) {
+				scope.phaseInListenerFunction = scope.$$phase;
+			});
+
+			scope.$apply(function() {
+				scope.phaseInApplyFunction = scope.$$phase;
+			});
+
+			expect(scope.phaseInWatchFunction).toBe('$digest');
+			expect(scope.phaseInListenerFunction).toBe('$digest');
+			expect(scope.phaseInApplyFunction).toBe('$apply');
+
+		});
+
+		it('schedules the digest in $evalAsync', function(done) {
+			scope.someValue = 1;
+			scope.counter = 0;
+
+			scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter += 1;
+			});
+
+			scope.$evalAsync(function(scope) {});
+
+			expect(scope.counter).toEqual(0);
+			setTimeout(function() {
+				expect(scope.counter).toEqual(1);
+				done();
+			}, 50);
+
+		});
+
 	});
 
 	describe("$apply", function() {
