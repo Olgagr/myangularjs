@@ -392,6 +392,27 @@ describe("Scope", function() {
 
 		});
 
+		it('catches exceptions in $evalAsync', function(done) {
+			scope.someValue = 1;
+			scope.counter = 0;
+
+			scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter++;
+			});
+
+			scope.$evalAsync(function(scope) {
+				throw 'Error';
+			});
+
+			setTimeout(function() {
+				expect(scope.counter).toEqual(1);
+				done();
+			}, 50);
+
+		});
+
 	});
 
 	describe("$apply", function() {
