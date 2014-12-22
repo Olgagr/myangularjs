@@ -250,6 +250,45 @@ describe("Scope", function() {
 			expect(scope.counter).toBe(1);
 		});
 
+		it('catches exceptions in watch function and continues', function() {
+			scope.someValue = 1;
+			scope.counter = 0;
+
+			scope.$watch(function(scope) {
+				throw 'Error';
+			}, function() {})
+
+			scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter++;
+			});
+
+			scope.$digest();
+			expect(scope.counter).toEqual(1);
+
+		});
+
+		it('catches exceptions in listener function and continues', function() {
+			scope.someValue = 1;
+			scope.counter = 0;
+
+			scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function() {
+				throw 'Error';
+			});
+
+			scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter++;
+			});
+
+			scope.$digest();
+			expect(scope.counter).toEqual(1);
+		});
+
 	});
 
 	describe("$eval", function() {

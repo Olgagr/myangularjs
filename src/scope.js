@@ -68,17 +68,21 @@ Scope.prototype = {
 				dirty;
 
 		_.forEach(this.$$watchers, function(watcher) {
-			newValue = watcher.watchFn(self);
-			oldValue = watcher.last;
+			try {
+				newValue = watcher.watchFn(self);
+				oldValue = watcher.last;
 
-			if(!self.$$areEqual(newValue, oldValue, watcher.valueCheck)) {
-				self.$$lastDirtyWatch = watcher;
-				watcher.last = (watcher.valueCheck ? _.cloneDeep(newValue) : newValue);
-				oldValue = (oldValue === initWatchValue ? newValue : oldValue);
-				watcher.listenerFn(newValue, oldValue, self);
-				dirty = true;
-			} else if(self.$$lastDirtyWatch === watcher) {
-				return false;
+				if(!self.$$areEqual(newValue, oldValue, watcher.valueCheck)) {
+					self.$$lastDirtyWatch = watcher;
+					watcher.last = (watcher.valueCheck ? _.cloneDeep(newValue) : newValue);
+					oldValue = (oldValue === initWatchValue ? newValue : oldValue);
+					watcher.listenerFn(newValue, oldValue, self);
+					dirty = true;
+				} else if(self.$$lastDirtyWatch === watcher) {
+					return false;
+				}
+			} catch(e) {
+				console.error(e);
 			}
 		});
 		return dirty;
