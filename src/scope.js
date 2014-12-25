@@ -64,6 +64,7 @@ Scope.prototype = {
 		return function() {
 			var index = self.$$watchers.indexOf(watcher);
 			if(index >= 0) self.$$watchers.splice(index, 1);
+			self.$$lastDirtyWatch = null;
 		};
 	},
 	$$digestOnce: function() {
@@ -73,21 +74,23 @@ Scope.prototype = {
 				dirty;
 
 		_.forEachRight(this.$$watchers, function(watcher) {
-			try {
-				newValue = watcher.watchFn(self);
-				oldValue = watcher.last;
+			if(watcher) {
+				try {
+					newValue = watcher.watchFn(self);
+					oldValue = watcher.last;
 
-				if(!self.$$areEqual(newValue, oldValue, watcher.valueCheck)) {
-					self.$$lastDirtyWatch = watcher;
-					watcher.last = (watcher.valueCheck ? _.cloneDeep(newValue) : newValue);
-					oldValue = (oldValue === initWatchValue ? newValue : oldValue);
-					watcher.listenerFn(newValue, oldValue, self);
-					dirty = true;
-				} else if(self.$$lastDirtyWatch === watcher) {
-					return false;
+					if(!self.$$areEqual(newValue, oldValue, watcher.valueCheck)) {
+						self.$$lastDirtyWatch = watcher;
+						watcher.last = (watcher.valueCheck ? _.cloneDeep(newValue) : newValue);
+						oldValue = (oldValue === initWatchValue ? newValue : oldValue);
+						watcher.listenerFn(newValue, oldValue, self);
+						dirty = true;
+					} else if(self.$$lastDirtyWatch === watcher) {
+						return false;
+					}
+				} catch(e) {
+					console.error(e);
 				}
-			} catch(e) {
-				console.error(e);
 			}
 		});
 		return dirty;

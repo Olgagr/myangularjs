@@ -336,6 +336,50 @@ describe("Scope", function() {
 
 		});
 
+		it('allows $watch to remove other during digest', function() {
+			scope.someValue = 1;
+			scope.counter = 0;
+
+			scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				removeWatcher();
+			});
+
+			var removeWatcher = scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {});
+
+			scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue,oldValue, scope) {
+				scope.counter += 1;
+			});	
+
+			scope.$digest();
+			expect(scope.counter).toEqual(1);
+
+		});
+
+		it('allows removing several watchers during digest', function() {
+			scope.someValue = 1;
+			scope.counter = 0;
+
+			var removeWatcher1 = scope.$watch(function(scope) {
+				removeWatcher1();
+				removeWatcher2();
+			});
+
+			var removeWatcher2 = scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter += 1;
+			});
+
+			scope.$digest();
+			expect(scope.counter).toEqual(0);
+		});
+
 	});
 
 	describe("$eval", function() {
