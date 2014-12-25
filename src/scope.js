@@ -52,14 +52,19 @@ Scope.prototype = {
 		}
 	},
 	$watch: function(watchFn, listenerFn, valueCheck) {
+		var self = this;
 		var watcher = {
 			watchFn: watchFn,
 			listenerFn: listenerFn || function() {},
 			valueCheck: !!valueCheck,
 			last: initWatchValue	
 		};
-		this.$$watchers.push(watcher);
+		this.$$watchers.unshift(watcher);
 		this.$$lastDirtyWatch = null;
+		return function() {
+			var index = self.$$watchers.indexOf(watcher);
+			if(index >= 0) self.$$watchers.splice(index, 1);
+		};
 	},
 	$$digestOnce: function() {
 		var self = this,
@@ -67,7 +72,7 @@ Scope.prototype = {
 				oldValue,
 				dirty;
 
-		_.forEach(this.$$watchers, function(watcher) {
+		_.forEachRight(this.$$watchers, function(watcher) {
 			try {
 				newValue = watcher.watchFn(self);
 				oldValue = watcher.last;

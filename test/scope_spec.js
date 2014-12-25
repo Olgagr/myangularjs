@@ -289,6 +289,53 @@ describe("Scope", function() {
 			expect(scope.counter).toEqual(1);
 		});
 
+		it('allows removing watchers', function() {
+			scope.someValue = 1;
+			scope.counter = 0;
+
+			var removeWatcher = scope.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter += 1;
+			});
+
+			scope.$digest()
+			expect(scope.counter).toEqual(1);
+
+			scope.someValue = 2;
+			scope.$digest();
+			expect(scope.counter).toEqual(2);
+
+			removeWatcher();
+			scope.someValue = 3;
+			scope.$digest();
+			expect(scope.counter).toEqual(2);
+		});
+
+		it('allows removing watchers during digest', function() {
+			scope.someValue = 0;
+			var calledWatchers = [];
+
+			scope.$watch(function(scope) {
+				calledWatchers.push('first');
+				return scope.someValue;
+			});
+
+			var removeWatcher = scope.$watch(function(scope) {
+				calledWatchers.push('second');
+				removeWatcher();
+			});
+
+			scope.$watch(function(scope) {
+				calledWatchers.push('third');
+				return scope.someValue;
+			});
+
+			scope.$digest();
+			expect(calledWatchers).toEqual(['first', 'second', 'third', 'first', 'third']);
+
+		});
+
 	});
 
 	describe("$eval", function() {
