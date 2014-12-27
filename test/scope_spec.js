@@ -541,8 +541,13 @@ describe("Scope", function() {
 
 	describe('inheritance', function() {
 
+		var parent;
+
+		beforeEach(function() {
+			parent = new Scope();
+		})
+
 		it('inherits properties from the parent', function() {
-			var parent = new Scope();
 			parent.someValue = 1;
 
 			var child = parent.$new();
@@ -550,7 +555,6 @@ describe("Scope", function() {
 		});
 
 		it('does not share properties with parent', function() {
-			var parent = new Scope();
 			var child = parent.$new();
 
 			child.someValue = 1;
@@ -558,7 +562,6 @@ describe("Scope", function() {
 		});
 
 		it('can change parent properties', function() {
-			var parent = new Scope();
 			var child = parent.$new();
 
 			parent.someValue = [1,2,3];
@@ -568,7 +571,6 @@ describe("Scope", function() {
 		});
 
 		it('watches properties in the parent', function() {
-			var parent = new Scope();
 			var child = parent.$new();
 			var counter = 0;
 
@@ -588,6 +590,49 @@ describe("Scope", function() {
 			expect(counter).toEqual(2);
 
 		});
+
+		it('shadows parent\'s primitive properties', function() {
+			var child = parent.$new();
+			parent.someValue = 1;
+			child.someValue = 2;
+
+			expect(parent.someValue).toEqual(1);
+			expect(child.someValue).toEqual(2);
+
+		});
+
+		it('does not shadow parent\'s property if this is an object', function() {
+			var child = parent.$new();
+			parent.someValue = { number: 1 };
+			child.someValue.number = 2;
+
+			expect(parent.someValue.number).toEqual(2);
+			expect(child.someValue.number).toEqual(2);
+		});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	});
 
