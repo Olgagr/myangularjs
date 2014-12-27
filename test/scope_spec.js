@@ -539,4 +539,56 @@ describe("Scope", function() {
 
 	});
 
+	describe('inheritance', function() {
+
+		it('inherits properties from the parent', function() {
+			var parent = new Scope();
+			parent.someValue = 1;
+
+			var child = parent.$new();
+			expect(child.someValue).toEqual(1);
+		});
+
+		it('does not share properties with parent', function() {
+			var parent = new Scope();
+			var child = parent.$new();
+
+			child.someValue = 1;
+			expect(parent.someValue).toBeUndefined();
+		});
+
+		it('can change parent properties', function() {
+			var parent = new Scope();
+			var child = parent.$new();
+
+			parent.someValue = [1,2,3];
+			child.someValue.push(4);
+
+			expect(parent.someValue).toEqual([1,2,3,4]);
+		});
+
+		it('watches properties in the parent', function() {
+			var parent = new Scope();
+			var child = parent.$new();
+			var counter = 0;
+
+			parent.someValue = [1,2,3];
+
+			child.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				counter += 1;
+			}, true);
+
+			child.$digest();
+			expect(counter).toEqual(1);
+
+			parent.someValue.push(4);
+			child.$digest();
+			expect(counter).toEqual(2);
+
+		});
+
+	});
+
 });

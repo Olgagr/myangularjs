@@ -115,5 +115,8 @@ Scope.prototype = {
 			}
 		} while (dirty || this.$$asyncQueue.length);
 		this.$clearPhase();
+	},
+	$new: function() {
+		return Object.create(this);
 	}
 };
