@@ -625,7 +625,34 @@ describe("Scope", function() {
 			expect(parent.aValue).toBe(1);
 		});
 
+		it('keeps track of its children', function() {
+			var parent = new Scope();
+			var child_1 = parent.$new();
+			var child_2 = parent.$new();
+			var child_1_2 = child_1.$new();
 
+			expect(parent.$$children.length).toEqual(2);
+			expect(parent.$$children[0]).toBe(child_1);
+			expect(parent.$$children[1]).toBe(child_2);
+
+			expect(child_1.$$children.length).toEqual(1);
+			expect(child_1.$$children[0]).toBe(child_1_2); 
+		});
+
+		it('digests its children', function() {
+			var parent = new Scope();
+			var child = parent.$new();
+
+			parent.someValue = 1;
+			child.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.someValue = 2;
+			});
+
+			parent.$digest();
+			expect(child.someValue).toEqual(2);
+		});
 
 
 

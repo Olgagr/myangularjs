@@ -8,6 +8,7 @@ function Scope () {
 	this.$$lastDirtyWatch = null;
 	this.$$asyncQueue = [];
 	this.$$phase = null;
+	this.$$children = [];
 }
 
 Scope.prototype = {
@@ -69,29 +70,33 @@ Scope.prototype = {
 	},
 	$$digestOnce: function() {
 		var self = this,
-				newValue, 
-				oldValue,
-				dirty;
+				dirty, 
+				continueLoop = true;
 
-		_.forEachRight(this.$$watchers, function(watcher) {
-			if(watcher) {
-				try {
-					newValue = watcher.watchFn(self);
-					oldValue = watcher.last;
+		this.$$everyScope(function(scope) {
+			var newValue, oldValue;
+			_.forEachRight(scope.$$watchers, function(watcher) {
+				if(watcher) {
+					try {
+						newValue = watcher.watchFn(scope);
+						oldValue = watcher.last;
 
-					if(!self.$$areEqual(newValue, oldValue, watcher.valueCheck)) {
-						self.$$lastDirtyWatch = watcher;
-						watcher.last = (watcher.valueCheck ? _.cloneDeep(newValue) : newValue);
-						oldValue = (oldValue === initWatchValue ? newValue : oldValue);
-						watcher.listenerFn(newValue, oldValue, self);
-						dirty = true;
-					} else if(self.$$lastDirtyWatch === watcher) {
-						return false;
+						if(!scope.$$areEqual(newValue, oldValue, watcher.valueCheck)) {
+							self.$$lastDirtyWatch = watcher;
+							watcher.last = (watcher.valueCheck ? _.cloneDeep(newValue) : newValue);
+							oldValue = (oldValue === initWatchValue ? newValue : oldValue);
+							watcher.listenerFn(newValue, oldValue, scope);
+							dirty = true;
+						} else if(self.$$lastDirtyWatch === watcher) {
+							continueLoop = false;
+							return false;
+						}
+					} catch(e) {
+						console.error(e);
 					}
-				} catch(e) {
-					console.error(e);
 				}
-			}
+			});
+			return continueLoop;
 		});
 		return dirty;
 	},
@@ -118,7 +123,26 @@ Scope.prototype = {
 	},
 	$new: function() {
 		var child = Object.create(this); 
+		this.$$children.push(child);
 		child.$$watchers = [];
+		child.$$children = [];
 		return child;
+	},
+	$$everyScope: function(fn) {
+		if (fn(this)) {
+			return this.$$children.every(function(child) {
+				return child.$$everyScope(fn);
+			});
+		} else {
+			return false;
+		}
 	}
+
+
+
+
+
+
+
+
 };
