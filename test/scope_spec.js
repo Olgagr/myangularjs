@@ -610,7 +610,20 @@ describe("Scope", function() {
 			expect(child.someValue.number).toEqual(2);
 		});
 
+		it('does not digests its ancestors', function() {
+			var parent = new Scope();
+			var child = parent.$new();
 
+			parent.aValue = 1;
+			parent.$watch(function(scope) {
+				scope.aValue;
+			}, function(newValue, oldValue, scope) {
+				scope.aValue = 2;
+			});
+
+			child.$digest();
+			expect(parent.aValue).toBe(1);
+		});
 
 
 

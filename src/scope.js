@@ -117,6 +117,8 @@ Scope.prototype = {
 		this.$clearPhase();
 	},
 	$new: function() {
-		return Object.create(this);
+		var child = Object.create(this); 
+		child.$$watchers = [];
+		return child;
 	}
 };
