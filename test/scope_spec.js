@@ -692,6 +692,85 @@ describe("Scope", function() {
 			}, 50);
 		});
 
+		it('does not have access to parent attributes when isolated', function() {
+			var parent = new Scope();
+			var child = parent.$new(true);
+
+			parent.someValue = 1;
+			expect(child.someValue).toBeUndefined();
+		});
+
+		it('cannot watch parent attributes when isolated', function() {
+			var parent = new Scope();
+			var child = parent.$new(true);
+
+			parent.someValue = 1;
+			child.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.someValue = newValue;
+			});
+
+			child.$digest();
+			expect(child.someValue).toBeUndefined();
+		});
+
+		it('digests its isolated children', function() {
+			var parent = new Scope();
+			var child = parent.$new(true);
+
+			child.someValue = 1;
+			child.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.someValue = 2;
+			});
+
+			parent.$digest();
+			expect(child.someValue).toEqual(2);
+		});
+
+		it('digests from root in $apply when isolated', function() {
+			var parent = new Scope();
+			var child = parent.$new(true);
+			var child_2 = child.$new();
+
+			parent.someValue = 1;
+			parent.counter = 0;
+
+			parent.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter += 1;
+			}); 
+
+			child_2.$apply(function(scope) {});
+
+			expect(parent.counter).toEqual(1);
+		});
+
+		it('digests from root in $evalAsync when isolated', function() {
+			var parent = new Scope();
+			var child = parent.$new(true);
+			var child_2 = child.$new();
+
+			parent.someValue = 1;
+			parent.counter = 0;
+
+			parent.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter += 1;
+			}); 
+
+			child_2.$evalAsync(function(scope) {});
+
+			setTimeout(function() {
+				expect(parent.counter).toEqual(1);
+				done();
+			}, 50);
+		});
+
 
 
 

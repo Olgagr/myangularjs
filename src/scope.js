@@ -122,8 +122,15 @@ Scope.prototype = {
 		} while (dirty || this.$$asyncQueue.length);
 		this.$clearPhase();
 	},
-	$new: function() {
-		var child = Object.create(this); 
+	$new: function(isIsolated) {
+		var child; 
+		if(isIsolated) {
+			child = new Scope();
+			child.$$root = this.$$root;
+			child.$$asyncQueue = this.$$asyncQueue;
+		} else {
+			child = Object.create(this); 
+		}
 		this.$$children.push(child);
 		child.$$watchers = [];
 		child.$$children = [];
