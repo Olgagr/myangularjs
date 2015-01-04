@@ -671,6 +671,26 @@ describe("Scope", function() {
 			expect(parent.counter).toEqual(1);
 		});
 
+		it('digests from the root in $evalAsync', function() {
+			var parent = new Scope();
+			var child = parent.$new();
+
+			parent.someValue = 1;
+			parent.counter = 0;
+
+			parent.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter += 1;
+			});
+
+			child.$evalAsync(function(scope) {});
+
+			setTimeout(function() {
+				expect(parent.counter).toEqual(1);
+				done();
+			}, 50);
+		});
 
 
 
