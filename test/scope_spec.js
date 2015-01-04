@@ -654,7 +654,22 @@ describe("Scope", function() {
 			expect(child.someValue).toEqual(2);
 		});
 
+		it('digests the parent when call $apply', function() {
+			var parent = new Scope();
+			var child = parent.$new();
 
+			parent.someValue = 1;
+			parent.counter = 0;
+
+			parent.$watch(function(scope) {
+				return scope.someValue;
+			}, function(newValue, oldValue, scope) {
+				scope.counter += 1;
+			});
+
+			child.$apply(function(scope) {});
+			expect(parent.counter).toEqual(1);
+		});
 
 
 

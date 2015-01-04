@@ -9,6 +9,7 @@ function Scope () {
 	this.$$asyncQueue = [];
 	this.$$phase = null;
 	this.$$children = [];
+	this.$$root = this;
 }
 
 Scope.prototype = {
@@ -42,7 +43,7 @@ Scope.prototype = {
 			return this.$eval(expr);
 		} finally {
 			this.$clearPhase();
-			this.$digest();
+			this.$$root.$digest();
 		}
 	},
 	$$areEqual: function(newValue, oldValue, valueCheck) {
