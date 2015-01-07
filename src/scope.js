@@ -151,15 +151,16 @@ Scope.prototype = {
 		this.$$listeners[eventName] = this.$$listeners[eventName] || [];
 		this.$$listeners[eventName].push(callback); 
 	},
-	$emit: function(eventName) {
+	$$fireEvent: function(eventName) {
 		_.each(this.$$listeners[eventName] || [], function(callback) {
 			callback();
 		});
 	},
+	$emit: function(eventName) {
+		this.$$fireEvent(eventName);
+	},
 	$broadcast: function(eventName) {
-		_.each(this.$$listeners[eventName] || [], function(callback) {
-			callback();
-		});
+		this.$$fireEvent(eventName);
 	} 
 
 
