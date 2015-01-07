@@ -10,6 +10,7 @@ function Scope () {
 	this.$$phase = null;
 	this.$$children = [];
 	this.$$root = this;
+	this.$$listeners = {};
 }
 
 Scope.prototype = {
@@ -134,6 +135,7 @@ Scope.prototype = {
 		this.$$children.push(child);
 		child.$$watchers = [];
 		child.$$children = [];
+		child.$$listeners = {};
 		return child;
 	},
 	$$everyScope: function(fn) {
@@ -144,8 +146,11 @@ Scope.prototype = {
 		} else {
 			return false;
 		}
-	}
-
+	},
+	$on: function(eventName, callback) {
+		this.$$listeners[eventName] = this.$$listeners[eventName] || [];
+		this.$$listeners[eventName].push(callback); 
+	} 
 
 
 

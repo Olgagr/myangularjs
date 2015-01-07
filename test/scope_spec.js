@@ -771,22 +771,47 @@ describe("Scope", function() {
 			}, 50);
 		});
 
+	});
 
+	describe('Events', function(){
 
+		var parent, scope, child, isolatedChild;
 
+		beforeEach(function() {
+			parent = new Scope();
+			scope = parent.$new();
+			child = scope.$new();
+			isolatedChild = scope.$new(true);
+		});
 
+		it('allows registering listeners for particular events', function() {
+			var listener_1 = function() {};
+			var listener_2 = function() {};
+			var listener_3 = function() {};
 
+			scope.$on('event1', listener_1);
+			scope.$on('event1', listener_2);
+			scope.$on('event2', listener_3);
 
+			expect(scope.$$listeners).toEqual({
+				event1: [listener_1, listener_2],
+				event2: [listener_3]
+			});
+		});
 
+		it('has separated $$listeners from it children and parent', function() {
+			var listener_1 = function() {};
+			var listener_2 = function() {};
+			var listener_3 = function() {};
 
+			scope.$on('event', listener_1);
+			child.$on('event', listener_2);
+			isolatedChild.$on('event', listener_3);
 
-
-
-
-
-
-
-
+			expect(scope.$$listeners.event).toEqual([listener_1]);
+			expect(child.$$listeners.event).toEqual([listener_2]);
+			expect(isolatedChild.$$listeners.event).toEqual([listener_3]);
+		});
 
 	});
 
