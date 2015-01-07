@@ -150,6 +150,16 @@ Scope.prototype = {
 	$on: function(eventName, callback) {
 		this.$$listeners[eventName] = this.$$listeners[eventName] || [];
 		this.$$listeners[eventName].push(callback); 
+	},
+	$emit: function(eventName) {
+		_.each(this.$$listeners[eventName] || [], function(callback) {
+			callback();
+		});
+	},
+	$broadcast: function(eventName) {
+		_.each(this.$$listeners[eventName] || [], function(callback) {
+			callback();
+		});
 	} 
 
 
