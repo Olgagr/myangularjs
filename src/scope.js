@@ -152,8 +152,11 @@ Scope.prototype = {
 		this.$$listeners[eventName].push(callback); 
 	},
 	$$fireEvent: function(eventName) {
+		var eventObject = {
+			name: eventName
+		};
 		_.each(this.$$listeners[eventName] || [], function(callback) {
-			callback();
+			callback(eventObject);
 		});
 	},
 	$emit: function(eventName) {

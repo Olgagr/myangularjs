@@ -829,6 +829,29 @@ describe("Scope", function() {
 					expect(listener_2).not.toHaveBeenCalled();
 				});
 
+				it('passes an event object with a name to listener on ' + method, function() {
+					var listener = jasmine.createSpy();
+					scope.$on('event', listener);
+
+					scope[method]('event');
+					expect(listener).toHaveBeenCalled();
+					expect(listener.calls.mostRecent().args[0].name).toEqual('event');
+				});
+
+				it('passes the same object to each listener on' + method, function() {
+					var listener_1 = jasmine.createSpy();
+					var listener_2 = jasmine.createSpy();
+					
+					scope.$on('event', listener_1);
+					scope.$on('event', listener_2);
+
+					scope[method]('event');
+					var event_1 = listener_1.calls.mostRecent().args[0];
+					var event_2 = listener_2.calls.mostRecent().args[0];
+
+					expect(event_1).toBe(event_2);
+				});
+
 			});
 
 		});
