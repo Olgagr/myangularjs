@@ -148,17 +148,30 @@ Scope.prototype = {
 		}
 	},
 	$on: function(eventName, callback) {
-		this.$$listeners[eventName] = this.$$listeners[eventName] || [];
-		this.$$listeners[eventName].push(callback); 
+		var listeners = this.$$listeners[eventName];
+		if(!listeners) this.$$listeners[eventName] = listeners = [];
+		listeners.push(callback); 
+		return function() {
+			var index = listeners.indexOf(callback);
+			if(index >= 0) listeners[index] = null;
+		};
 	},
 	$$fireEvent: function(eventName, restArgs) {
 		var eventObject = {
 			name: eventName
 		};
 		var args = [eventObject].concat(restArgs);
-		_.each(this.$$listeners[eventName] || [], function(callback) {
-			callback.apply(null, args);
-		});
+		var listeners = this.$$listeners[eventName] || [];
+		var i = 0;
+
+		while(i < listeners.length) {
+			if(listeners[i] === null) {
+				listeners.splice(i, 1);
+			} else {
+				listeners[i].apply(null, args);
+				i++;
+			}
+		}
 		return eventObject;
 	},
 	$emit: function(eventName) {

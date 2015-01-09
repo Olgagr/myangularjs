@@ -870,6 +870,17 @@ describe("Scope", function() {
 					expect(obj.name).toEqual('event');
 				});
 
+				it('can be deregistered', function() {
+					var listener = jasmine.createSpy();
+					var deregister = scope.$on('event', listener);
+
+					deregister();
+					scope[method]('event');
+
+					expect(listener).not.toHaveBeenCalled();
+
+				});
+
 			});
 
 		});
