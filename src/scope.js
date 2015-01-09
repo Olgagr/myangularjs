@@ -151,19 +151,22 @@ Scope.prototype = {
 		this.$$listeners[eventName] = this.$$listeners[eventName] || [];
 		this.$$listeners[eventName].push(callback); 
 	},
-	$$fireEvent: function(eventName) {
+	$$fireEvent: function(eventName, restArgs) {
 		var eventObject = {
 			name: eventName
 		};
+		var args = [eventObject].concat(restArgs);
 		_.each(this.$$listeners[eventName] || [], function(callback) {
-			callback(eventObject);
+			callback.apply(null, args);
 		});
 	},
 	$emit: function(eventName) {
-		this.$$fireEvent(eventName);
+		var restArgs = _.rest(arguments);
+		this.$$fireEvent(eventName, restArgs);
 	},
 	$broadcast: function(eventName) {
-		this.$$fireEvent(eventName);
+		var restArgs = _.rest(arguments);
+		this.$$fireEvent(eventName, restArgs);
 	} 
 
 

@@ -815,7 +815,7 @@ describe("Scope", function() {
 
 		_.each(['$emit', '$broadcast'], function(method) {
 
-			describe('when event was' + method, function() {
+			describe('when event was ' + method, function() {
 
 				it('calls listeners registered for given event', function() {
 					var listener_1 = jasmine.createSpy();
@@ -850,6 +850,17 @@ describe("Scope", function() {
 					var event_2 = listener_2.calls.mostRecent().args[0];
 
 					expect(event_1).toBe(event_2);
+				});
+
+				it('passes additional arguments to listener', function() {
+					var listener = jasmine.createSpy();
+					scope.$on('event', listener);
+
+					scope[method]('event', 'and', ['some', 'arguments'], '!');
+
+					expect(listener.calls.mostRecent().args[1]).toEqual('and');
+					expect(listener.calls.mostRecent().args[2]).toEqual(['some', 'arguments']);
+					expect(listener.calls.mostRecent().args[3]).toEqual('!');
 				});
 
 			});
