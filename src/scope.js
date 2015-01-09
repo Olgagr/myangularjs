@@ -159,14 +159,15 @@ Scope.prototype = {
 		_.each(this.$$listeners[eventName] || [], function(callback) {
 			callback.apply(null, args);
 		});
+		return eventObject;
 	},
 	$emit: function(eventName) {
 		var restArgs = _.rest(arguments);
-		this.$$fireEvent(eventName, restArgs);
+		return this.$$fireEvent(eventName, restArgs);
 	},
 	$broadcast: function(eventName) {
 		var restArgs = _.rest(arguments);
-		this.$$fireEvent(eventName, restArgs);
+		return this.$$fireEvent(eventName, restArgs);
 	} 
 
 

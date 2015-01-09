@@ -829,7 +829,7 @@ describe("Scope", function() {
 					expect(listener_2).not.toHaveBeenCalled();
 				});
 
-				it('passes an event object with a name to listener on ' + method, function() {
+				it('passes an event object with a name to listener', function() {
 					var listener = jasmine.createSpy();
 					scope.$on('event', listener);
 
@@ -838,7 +838,7 @@ describe("Scope", function() {
 					expect(listener.calls.mostRecent().args[0].name).toEqual('event');
 				});
 
-				it('passes the same object to each listener on' + method, function() {
+				it('passes the same object to each listener', function() {
 					var listener_1 = jasmine.createSpy();
 					var listener_2 = jasmine.createSpy();
 					
@@ -863,11 +863,18 @@ describe("Scope", function() {
 					expect(listener.calls.mostRecent().args[3]).toEqual('!');
 				});
 
+				it('returns event object', function() {
+					var obj = scope[method]('event');
+
+					expect(obj).toBeDefined();
+					expect(obj.name).toEqual('event');
+				});
+
 			});
 
 		});
 
-
+		
 
 
 
