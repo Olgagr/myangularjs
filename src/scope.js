@@ -136,6 +136,7 @@ Scope.prototype = {
 		child.$$watchers = [];
 		child.$$children = [];
 		child.$$listeners = {};
+		child.$parent = this;
 		return child;
 	},
 	$$everyScope: function(fn) {
@@ -156,11 +157,11 @@ Scope.prototype = {
 			if(index >= 0) listeners[index] = null;
 		};
 	},
-	$$fireEvent: function(eventName, restArgs) {
-		var eventObject = {
-			name: eventName
-		};
-		var args = [eventObject].concat(restArgs);
+	$$fireEvent: function(eventName, args) {
+		// var eventObject = {
+		// 	name: eventName
+		// };
+		// var args = [eventObject].concat(restArgs);
 		var listeners = this.$$listeners[eventName] || [];
 		var i = 0;
 
@@ -172,15 +173,28 @@ Scope.prototype = {
 				i++;
 			}
 		}
-		return eventObject;
 	},
 	$emit: function(eventName) {
+		var eventObject = {
+			name: eventName
+		};
 		var restArgs = _.rest(arguments);
-		return this.$$fireEvent(eventName, restArgs);
+		var args = [eventObject].concat(restArgs);
+		var scope = this;
+		do {
+			scope.$$fireEvent(eventName, args);
+			scope = scope.$parent;
+		} while(scope);
+		return eventObject;
 	},
 	$broadcast: function(eventName) {
+		var eventObject = {
+			name: eventName
+		};
 		var restArgs = _.rest(arguments);
-		return this.$$fireEvent(eventName, restArgs);
+		var args = [eventObject].concat(restArgs);
+		this.$$fireEvent(eventName, args);
+		return eventObject;
 	} 
 
 
