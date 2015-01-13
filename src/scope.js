@@ -158,10 +158,6 @@ Scope.prototype = {
 		};
 	},
 	$$fireEvent: function(eventName, args) {
-		// var eventObject = {
-		// 	name: eventName
-		// };
-		// var args = [eventObject].concat(restArgs);
 		var listeners = this.$$listeners[eventName] || [];
 		var i = 0;
 
@@ -193,7 +189,10 @@ Scope.prototype = {
 		};
 		var restArgs = _.rest(arguments);
 		var args = [eventObject].concat(restArgs);
-		this.$$fireEvent(eventName, args);
+		this.$$everyScope(function(scope) {
+			scope.$$fireEvent(eventName, args);
+			return true;
+		});
 		return eventObject;
 	} 
 

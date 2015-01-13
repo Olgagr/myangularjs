@@ -898,6 +898,19 @@ describe("Scope", function() {
 			expect(childListener).toHaveBeenCalled();
 		});
 
+		it('propagates down the scope hierarchy on $broadcast', function() {
+			var parentListener = jasmine.createSpy();
+			var childListener = jasmine.createSpy();
+
+			parent.$on('event', parentListener);
+			scope.$on('event', childListener);
+
+			parent.$broadcast('event');
+
+			expect(parentListener).toHaveBeenCalled();
+			expect(childListener).toHaveBeenCalled();
+		});
+
 		
 
 
