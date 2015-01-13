@@ -977,6 +977,22 @@ describe("Scope", function() {
 			expect(currentScopeOnChild).toBe(scope);
 		});		
 
+		it('stops event propagation on $emit', function() {
+
+			var childListener = function(event) {
+				event.stopPropagation();
+			};
+
+			var parentListener = jasmine.createSpy();
+
+			scope.$on('event', childListener);
+			parent.$on('event', parentListener);
+
+			scope.$emit('event');
+
+			expect(parentListener).not.toHaveBeenCalled();
+		});
+
 
 
 
