@@ -172,7 +172,8 @@ Scope.prototype = {
 	},
 	$emit: function(eventName) {
 		var eventObject = {
-			name: eventName
+			name: eventName,
+			targetScope: this
 		};
 		var restArgs = _.rest(arguments);
 		var args = [eventObject].concat(restArgs);
@@ -185,7 +186,8 @@ Scope.prototype = {
 	},
 	$broadcast: function(eventName) {
 		var eventObject = {
-			name: eventName
+			name: eventName,
+			targetScope: this
 		};
 		var restArgs = _.rest(arguments);
 		var args = [eventObject].concat(restArgs);

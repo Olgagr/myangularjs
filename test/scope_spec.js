@@ -911,6 +911,32 @@ describe("Scope", function() {
 			expect(childListener).toHaveBeenCalled();
 		});
 
+		it('contains the scope the event was originated in target scope on $emit', function() {
+			var parentListener = jasmine.createSpy();
+			var childListener = jasmine.createSpy();
+
+			parent.$on('event', parentListener);
+			scope.$on('event', childListener);
+
+			scope.$emit('event');
+			
+			expect(parentListener.calls.mostRecent().args[0].targetScope).toBe(scope);
+			expect(childListener.calls.mostRecent().args[0].targetScope).toBe(scope);	
+		});
+
+		it('contains the scope the event was originated in target scope on $broadcast', function() {
+			var parentListener = jasmine.createSpy();
+			var childListener = jasmine.createSpy();
+
+			scope.$on('event', parentListener);
+			child.$on('event', childListener);
+
+			scope.$broadcast('event');
+			
+			expect(parentListener.calls.mostRecent().args[0].targetScope).toBe(scope);
+			expect(childListener.calls.mostRecent().args[0].targetScope).toBe(scope);	
+		});
+
 		
 
 
