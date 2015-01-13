@@ -179,6 +179,7 @@ Scope.prototype = {
 		var args = [eventObject].concat(restArgs);
 		var scope = this;
 		do {
+			eventObject.currentScope = scope;
 			scope.$$fireEvent(eventName, args);
 			scope = scope.$parent;
 		} while(scope);
@@ -192,6 +193,7 @@ Scope.prototype = {
 		var restArgs = _.rest(arguments);
 		var args = [eventObject].concat(restArgs);
 		this.$$everyScope(function(scope) {
+			eventObject.currentScope = scope;
 			scope.$$fireEvent(eventName, args);
 			return true;
 		});

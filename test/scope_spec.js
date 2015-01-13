@@ -937,7 +937,77 @@ describe("Scope", function() {
 			expect(childListener.calls.mostRecent().args[0].targetScope).toBe(scope);	
 		});
 
-		
+		it('attaches currentScope on $emit', function() {
+			var currentScopeOnParent, currentScopeOnChild;
+
+			var parentListener = function(event) {
+				currentScopeOnParent = event.currentScope;
+			};
+
+			var childListener = function(event) {
+				currentScopeOnChild = event.currentScope;
+			};
+
+			parent.$on('event', parentListener);
+			scope.$on('event', childListener);
+
+			scope.$emit('event');
+
+			expect(currentScopeOnParent).toBe(parent);
+			expect(currentScopeOnChild).toBe(scope);
+		});
+
+		it('attaches currentScope on $broadcast', function() {
+			var currentScopeOnParent, currentScopeOnChild;
+
+			var parentListener = function(event) {
+				currentScopeOnParent = event.currentScope;
+			};
+
+			var childListener = function(event) {
+				currentScopeOnChild = event.currentScope;
+			};
+
+			parent.$on('event', parentListener);
+			scope.$on('event', childListener);
+
+			parent.$broadcast('event');
+
+			expect(currentScopeOnParent).toBe(parent);
+			expect(currentScopeOnChild).toBe(scope);
+		});		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
