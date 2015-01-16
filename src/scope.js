@@ -38,6 +38,17 @@ Scope.prototype = {
 		}
 		this.$$asyncQueue.push({ scope: this, expr: expr });
 	},
+	$distroy: function() {
+		if(this === this.$$root){
+			return;
+		}
+		var siblings = this.$parent.$$children;
+		var indexOfThis = siblings.indexOf(this);
+		if(indexOfThis >= 0){
+			this.$broadcast('$distroy');
+			siblings.splice(indexOfThis, 1);
+		}
+	},
 	$apply: function(expr) {
 		try {
 			this.$beginPhase('$apply');

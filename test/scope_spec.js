@@ -1003,6 +1003,19 @@ describe("Scope", function() {
 			expect(parentListener).not.toHaveBeenCalled();
 		});
 
+		it('propagates $destoy when distroyed', function() {
+			var listener = jasmine.createSpy();
+			var childListener = jasmine.createSpy();
+
+			scope.$on('$distroy', listener);
+			child.$on('$distroy', childListener);
+
+			scope.$distroy();
+
+			expect(listener).toHaveBeenCalled();
+			expect(childListener).toHaveBeenCalled();
+		});
+
 
 
 
