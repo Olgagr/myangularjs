@@ -176,7 +176,12 @@ Scope.prototype = {
 			if(listeners[i] === null) {
 				listeners.splice(i, 1);
 			} else {
-				listeners[i].apply(null, args);
+				try {
+					listeners[i].apply(null, args);
+					
+				} catch(e) {
+					console.error(e);
+				}
 				i++;
 			}
 		}
