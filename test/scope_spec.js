@@ -881,6 +881,16 @@ describe("Scope", function() {
 
 				});
 
+				it('sets defaultPrevented when defaultPrevent was called', function() {
+					var listener = function(event) {
+						event.defaultPrevent();
+					};
+
+					scope.$on('event', listener);
+					var event = scope[method]('event');
+					expect(event.defaultPrevented).toBe(true);
+				});
+
 			});
 
 		});

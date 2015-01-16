@@ -177,6 +177,9 @@ Scope.prototype = {
 			targetScope: this,
 			stopPropagation: function() {
 				stopPropagation = true;
+			},
+			defaultPrevent: function() {
+				this.defaultPrevented = true;
 			}
 		};
 		var restArgs = _.rest(arguments);
@@ -192,7 +195,10 @@ Scope.prototype = {
 	$broadcast: function(eventName) {
 		var eventObject = {
 			name: eventName,
-			targetScope: this
+			targetScope: this,
+			defaultPrevent: function() {
+				this.defaultPrevented = true;
+			}
 		};
 		var restArgs = _.rest(arguments);
 		var args = [eventObject].concat(restArgs);
