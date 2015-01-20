@@ -47,7 +47,8 @@ Lexer.prototype.readNumber = function() {
 	number = 1*number;
 	this.tokens.push({
 		text: number,
-		fn: _.constant(number)
+		fn: _.constant(number),
+		constant: true
 	});
 };
 
@@ -55,7 +56,17 @@ function Parser (lexer) {
 	this.lexer = lexer;
 }
 
+Parser.prototype.primary = function() {
+	var token = this.tokens[0];
+	var primary = token.fn;
+	if(token.constant) {
+		primary.constant = true;
+		primary.literal = true;
+	}
+	return primary;
+};
+
 Parser.prototype.parse = function(text) {
 	this.tokens = this.lexer.lex(text);
-	return _.first(this.tokens).fn;
+	return this.primary();
 };
