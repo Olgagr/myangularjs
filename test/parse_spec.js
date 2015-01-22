@@ -16,4 +16,11 @@ describe('parse', function() {
 		expect(fn.literal).toBe(true);
 	});
 
+	it('can parse a floating point number', function() {
+		var fn = parse('4.2');
+		var fn2 = parse('.4');
+		expect(fn()).toBe(4.2);
+		expect(fn2()).toBe(0.4);
+	});
+
 });
