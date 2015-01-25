@@ -21,6 +21,8 @@ Lexer.prototype.lex = function(text) {
 		this.ch = this.text.charAt(this.index);
 		if(this.isNumber(this.ch) || (this.ch === '.' && this.isNumber(this.nextCharacter()))) {
 			this.readNumber();
+		} else if (this.ch === '\'' || this.ch === '"') {
+			this.readString();
 		} else {
 			throw 'Unexpected character' + this.ch;
 		}
@@ -54,6 +56,25 @@ Lexer.prototype.readNumber = function() {
 		fn: _.constant(number),
 		constant: true
 	});
+};
+
+Lexer.prototype.readString = function() {
+	this.index += 1;
+	var string = '';
+	while(this.index < this.text.length) {
+		var ch = this.text.charAt(this.index);
+		if(ch === '\'' || ch === '"') {
+			this.index += 1;
+			this.tokens.push({
+				fn: _.constant(string)
+			});
+			return;
+		} else {
+			string += ch;
+		}
+		this.index += 1;
+	}
+	throw 'Unmatched quotes';
 };
 
 function Parser (lexer) {

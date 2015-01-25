@@ -23,4 +23,14 @@ describe('parse', function() {
 		expect(fn2()).toBe(0.4);
 	});
 
+	it("can parse string in single quotes", function() {
+		var fn = parse("'some string'");
+		expect(fn()).toBe('some string');
+	});
+
+	it("can parse string in double quotes", function() {
+		var fn = parse('"some string"');
+		expect(fn()).toBe("some string");
+	});
+
 });
