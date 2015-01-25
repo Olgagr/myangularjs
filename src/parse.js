@@ -63,7 +63,8 @@ Lexer.prototype.readString = function() {
 	var string = '';
 	while(this.index < this.text.length) {
 		var ch = this.text.charAt(this.index);
-		if(ch === '\'' || ch === '"') {
+		console.log(this.ch, ch);
+		if(ch === this.ch) {
 			this.index += 1;
 			this.tokens.push({
 				fn: _.constant(string)
