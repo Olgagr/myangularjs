@@ -106,7 +106,8 @@ Lexer.prototype.readIdent = function() {
 	}
 	var token = { 
 		text: text,
-		fn: CONSTANTS[text] 
+		fn: CONSTANTS[text],
+		constant: true 
 	};
 	this.tokens.push(token);
 };
