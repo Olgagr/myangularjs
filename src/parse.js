@@ -1,6 +1,12 @@
 /* jshint globalstrict: true */
 "use strict";
 
+var CONSTANTS = {
+	'null': _.constant(null),
+	'false': _.constant(false),
+	'true': _.constant(true)
+};
+
 function parse(expr) {
 	var lexer = new Lexer();
 	var parser = new Parser(lexer);
@@ -23,6 +29,8 @@ Lexer.prototype.lex = function(text) {
 			this.readNumber();
 		} else if (this.ch === '\'' || this.ch === '"') {
 			this.readString();
+		} else if(this.isIdent(this.ch)) {
+			this.readIdent();
 		} else {
 			throw 'Unexpected character' + this.ch;
 		}
@@ -37,6 +45,10 @@ Lexer.prototype.nextCharacter = function() {
 
 Lexer.prototype.isNumber = function(character) {
 	return '0' <= character && character <= '9';
+};
+
+Lexer.prototype.isIdent = function(character) {
+	return (character >= 'a' && character <= 'z') || (character >= 'A' || character <= 'Z') || character === '_' || character === '$';
 };
 
 Lexer.prototype.readNumber = function() {
@@ -61,11 +73,14 @@ Lexer.prototype.readNumber = function() {
 Lexer.prototype.readString = function() {
 	this.index += 1;
 	var string = '';
+	var rawString;
 	while(this.index < this.text.length) {
 		var ch = this.text.charAt(this.index);
+		rawString += ch;
 		if(ch === this.ch) {
 			this.index += 1;
 			this.tokens.push({
+				text: rawString,
 				fn: _.constant(string),
 				constant: true
 			});
@@ -76,6 +91,24 @@ Lexer.prototype.readString = function() {
 		this.index += 1;
 	}
 	throw 'Unmatched quotes';
+};
+
+Lexer.prototype.readIdent = function() {
+	var text = '';
+	while(this.index < this.text.length) {
+		var ch = this.text.charAt(this.index);
+		if(this.isIdent(ch) || this.isNumber(ch)) {
+			text += ch;
+		} else {
+			break;
+		}
+		this.index++;
+	}
+	var token = { 
+		text: text,
+		fn: CONSTANTS[text] 
+	};
+	this.tokens.push(token);
 };
 
 function Parser (lexer) {
