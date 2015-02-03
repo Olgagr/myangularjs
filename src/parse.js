@@ -31,11 +31,12 @@ Lexer.prototype.lex = function(text) {
 			this.readString();
 		} else if(this.isIdent(this.ch)) {
 			this.readIdent();
+		} else if(this.isWhitespace(this.ch)) {
+			this.index += 1;	
 		} else {
 			throw 'Unexpected character' + this.ch;
 		}
 	}
-
 	return this.tokens;
 };
 
@@ -48,7 +49,11 @@ Lexer.prototype.isNumber = function(character) {
 };
 
 Lexer.prototype.isIdent = function(character) {
-	return (character >= 'a' && character <= 'z') || (character >= 'A' || character <= 'Z') || character === '_' || character === '$';
+	return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || character === '_' || character === '$';
+};
+
+Lexer.prototype.isWhitespace = function(character) {
+	return (character === ' ' || character === '\r' || character === '\n' || character === '\v' || character === '\t' || character === '\u00A0');
 };
 
 Lexer.prototype.readNumber = function() {

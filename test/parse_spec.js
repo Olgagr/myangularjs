@@ -70,4 +70,9 @@ describe('parse', function() {
 		expect(fn.constant).toBe(true);
 	});
 
+	it("ignores white spaces", function() {
+		var fn = parse(' \n42 ');
+		expect(fn()).toBe(42);
+	});
+
 });
