@@ -153,6 +153,7 @@ Parser.prototype.arrayDeclaration = function() {
 	var elementsFns = [];
 	if(!this.peek(']')) {
 		do {
+			if(this.peek(']')) break;
 			elementsFns.push(this.primary());
 		} while(this.expect(','));
 	}

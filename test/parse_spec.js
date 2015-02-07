@@ -86,6 +86,10 @@ describe('parse', function() {
 		expect(fn()).toEqual([1, "two", [4]]);
 	});
 
+	it("parses arrays with trailing commas", function() {
+		var fn = parse('[1,2,3,]');
+		expect(fn()).toEqual([1,2,3]);
+	});
 
 
 
