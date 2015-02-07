@@ -30,7 +30,7 @@ Lexer.prototype.lex = function(text) {
 			this.readNumber();
 		} else if (this.ch === '\'' || this.ch === '"') {
 			this.readString();
-		} else if(this.ch === '[' || this.ch === ']') {
+		} else if(this.ch === '[' || this.ch === ']' || this.ch === ',') {
 			this.tokens.push({
 				text: this.ch
 			});
@@ -143,18 +143,33 @@ Parser.prototype.primary = function() {
 };
 
 Parser.prototype.expect = function(text) {
-	if(this.tokens.length > 0) {
-		if(this.tokens[0].text === text || !text) {
-			return this.tokens.shift();
-		}
+	var token = this.peek(text);
+	if(token) {
+		return this.tokens.shift();
 	}
 };
 
 Parser.prototype.arrayDeclaration = function() {
+	var elementsFns = [];
+	if(!this.peek(']')) {
+		do {
+			elementsFns.push(this.primary());
+		} while(this.expect(','));
+	}
 	this.consume(']');
 	return function() {
-		return [];
+		return _.map(elementsFns, function(elementFn) {
+			return elementFn();
+		});
 	};
+};
+
+Parser.prototype.peek = function(text) {
+	if(this.tokens.length > 0) {
+		if(this.tokens[0].text === text || !text){
+			return this.tokens[0];
+		}
+	}
 };
 
 Parser.prototype.consume = function(text) {

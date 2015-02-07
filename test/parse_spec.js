@@ -81,7 +81,10 @@ describe('parse', function() {
 		expect(fn()).toEqual([]);
 	});
 
-
+	it("parses not empty arrays", function() {
+		var fn = parse('[1, "two", [4]]');
+		expect(fn()).toEqual([1, "two", [4]]);
+	});
 
 
 
