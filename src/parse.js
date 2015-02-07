@@ -158,11 +158,16 @@ Parser.prototype.arrayDeclaration = function() {
 		} while(this.expect(','));
 	}
 	this.consume(']');
-	return function() {
+	var arrayFn = function() {
 		return _.map(elementsFns, function(elementFn) {
 			return elementFn();
 		});
 	};
+
+	arrayFn.literal = true;
+	arrayFn.constant = true;
+
+	return arrayFn;
 };
 
 Parser.prototype.peek = function(text) {

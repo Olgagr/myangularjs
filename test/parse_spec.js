@@ -91,6 +91,11 @@ describe('parse', function() {
 		expect(fn()).toEqual([1,2,3]);
 	});
 
+	it("sets array as literal and constant", function() {
+		var fn = parse('[1,2]');
+		expect(fn.literal).toBe(true);
+		expect(fn.literal).toBe(true);
+	});
 
 
 
