@@ -1,4 +1,5 @@
 /* jshint globalstrict: true */
+/* global _: false */
 "use strict";
 
 var CONSTANTS = {
@@ -29,6 +30,11 @@ Lexer.prototype.lex = function(text) {
 			this.readNumber();
 		} else if (this.ch === '\'' || this.ch === '"') {
 			this.readString();
+		} else if(this.ch === '[' || this.ch === ']') {
+			this.tokens.push({
+				text: this.ch
+			});
+			this.index += 1;
 		} else if(this.isIdent(this.ch)) {
 			this.readIdent();
 		} else if(this.isWhitespace(this.ch)) {
@@ -122,14 +128,42 @@ function Parser (lexer) {
 }
 
 Parser.prototype.primary = function() {
-	var token = this.tokens[0];
-	var primary = token.fn;
-	if(token.constant) {
-		primary.constant = true;
-		primary.literal = true;
+	var primary;
+	if(this.expect('[')) {
+		primary = this.arrayDeclaration();
+	} else {
+		var token = this.expect();
+		primary = token.fn;
+		if(token.constant) {
+			primary.constant = true;
+			primary.literal = true;
+		}
 	}
 	return primary;
 };
+
+Parser.prototype.expect = function(text) {
+	if(this.tokens.length > 0) {
+		if(this.tokens[0].text === text || !text) {
+			return this.tokens.shift();
+		}
+	}
+};
+
+Parser.prototype.arrayDeclaration = function() {
+	this.consume(']');
+	return function() {
+		return [];
+	};
+};
+
+Parser.prototype.consume = function(text) {
+	if(!this.expect(text)) {
+		throw 'Unexpected. Expecting ' + text;
+	}
+};
+
+
 
 Parser.prototype.parse = function(text) {
 	this.tokens = this.lexer.lex(text);
