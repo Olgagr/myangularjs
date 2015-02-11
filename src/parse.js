@@ -177,14 +177,27 @@ Parser.prototype.arrayDeclaration = function() {
 };
 
 Parser.prototype.objectDeclaration = function() {
+	var keyValues = [];
+	if(!this.peek('}')) {
+		do {
+			var keyToken = this.expect();
+			this.consume(':');
+			var valueExpression = this.primary();
+			keyValues.push({ key: keyToken.text, value: valueExpression });
+		} while(this.expect(','));
+	}
 	this.consume('}');
 	var objectFn = function() {
-		return {};
+		var object = {};
+		_.forEach(keyValues, function(kv) {
+			object[kv.key] = kv.value();
+		});
+		return object;
 	};
 
 	objectFn.literal = true;
 	objectFn.constant = true;
-	
+
 	return objectFn;
 };
 

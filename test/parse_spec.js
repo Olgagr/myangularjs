@@ -102,6 +102,11 @@ describe('parse', function() {
 		expect(fn()).toEqual({});
 	});
 
+	it("parses not empty object", function() {
+		var fn = parse('{a: 1, b: [1,2], c: {d: 4}}');
+		expect(fn()).toEqual({a: 1, b: [1,2], c: {d: 4}});
+	});
+
 
 
 
