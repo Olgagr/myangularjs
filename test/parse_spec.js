@@ -97,6 +97,11 @@ describe('parse', function() {
 		expect(fn.literal).toBe(true);
 	});
 
+	it("parses empty object", function() {
+		var fn = parse('{}');
+		expect(fn()).toEqual({});
+	});
+
 
 
 
