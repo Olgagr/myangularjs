@@ -114,6 +114,13 @@ describe('parse', function() {
 		expect(fn()).toBeUndefined();
 	});
 
+	it("looks up a 2-part identifier path from the scope", function() {
+		var fn = parse('someKey.childKey');
+		expect(fn({ someKey: { childKey: 3 } })).toBe(3);
+		expect(fn({ someKey: {} })).toBeUndefined();
+		expect(fn()).toBeUndefined();
+	});
+
 
 
 

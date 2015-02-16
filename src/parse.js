@@ -19,9 +19,19 @@ function Lexer () {
 }
 
 var getterFn = function(ident) {
-	return function(scope) {
-		return scope ? scope[ident] : undefined;
-	};
+	var pathKeys = ident.split('.');
+
+	if(pathKeys.length === 1) {
+		return function(scope) {
+			return scope ? scope[ident] : undefined;
+		};
+	} else {
+		return function(scope) {
+			if(!scope) return undefined;
+			scope = scope[pathKeys[0]];
+			return scope ? scope[pathKeys[1]] : undefined;
+		};
+	}
 };
 
 Lexer.prototype.lex = function(text) {
@@ -118,7 +128,7 @@ Lexer.prototype.readIdent = function() {
 	var text = '';
 	while(this.index < this.text.length) {
 		var ch = this.text.charAt(this.index);
-		if(this.isIdent(ch) || this.isNumber(ch)) {
+		if(ch === '.' || this.isIdent(ch) || this.isNumber(ch)) {
 			text += ch;
 		} else {
 			break;
