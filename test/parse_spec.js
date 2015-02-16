@@ -107,7 +107,12 @@ describe('parse', function() {
 		expect(fn()).toEqual({a: 1, b: [1,2], c: {d: 4}});
 	});
 
-
+	it("looks up an attribute from the scope", function() {
+		var fn = parse('someKey');
+		expect(fn({ someKey: 1 })).toBe(1);
+		expect(fn({})).toBeUndefined();
+		expect(fn()).toBeUndefined();
+	});
 
 
 

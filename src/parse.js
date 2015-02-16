@@ -18,6 +18,12 @@ function Lexer () {
 	// body...
 }
 
+var getterFn = function(ident) {
+	return function(scope) {
+		return scope ? scope[ident] : undefined;
+	};
+};
+
 Lexer.prototype.lex = function(text) {
 	this.text = text;
 	this.index = 0;
@@ -121,11 +127,13 @@ Lexer.prototype.readIdent = function() {
 	}
 	var token = { 
 		text: text,
-		fn: CONSTANTS[text],
+		fn: CONSTANTS[text] || getterFn(text),
 		constant: true 
 	};
 	this.tokens.push(token);
 };
+
+
 
 function Parser (lexer) {
 	this.lexer = lexer;
