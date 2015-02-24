@@ -30,7 +30,7 @@ var generatedGetterFn = function(pathKeys) {
 	/* jshint +W054 */
 };
 
-var getterFn = function(ident) {
+var getterFn = _.memoize(function(ident) {
 	var pathKeys = ident.split('.');
 
 	if(pathKeys.length === 1) {
@@ -46,7 +46,7 @@ var getterFn = function(ident) {
 	} else {
 		return generatedGetterFn(pathKeys);
 	}
-};
+});
 
 Lexer.prototype.lex = function(text) {
 	this.text = text;
