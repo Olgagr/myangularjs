@@ -18,6 +18,18 @@ function Lexer () {
 	// body...
 }
 
+var generatedGetterFn = function(pathKeys) {
+	var code = '';
+	_.forEach(pathKeys, function(key) {
+		code += 'if(!scope) { return undefined; }\n';
+		code += 'scope = scope["' + key + '"];\n';
+	});
+	code += 'return scope;\n';
+	/* jshint -W054 */
+	return new Function('scope', code);
+	/* jshint +W054 */
+};
+
 var getterFn = function(ident) {
 	var pathKeys = ident.split('.');
 
@@ -25,12 +37,14 @@ var getterFn = function(ident) {
 		return function(scope) {
 			return scope ? scope[ident] : undefined;
 		};
-	} else {
+	} else if (pathKeys.length === 2) {
 		return function(scope) {
 			if(!scope) return undefined;
 			scope = scope[pathKeys[0]];
 			return scope ? scope[pathKeys[1]] : undefined;
 		};
+	} else {
+		return generatedGetterFn(pathKeys);
 	}
 };
 

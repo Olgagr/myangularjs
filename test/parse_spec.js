@@ -121,6 +121,12 @@ describe('parse', function() {
 		expect(fn()).toBeUndefined();
 	});
 
+	it("looks up arbitrary nested objects", function() {
+		var fn = parse('key1.key2.key3.key4');
+		expect(fn({ key1: { key2: { key3: { key4: 43 } } } })).toBe(43);
+		expect(fn({ key1: { key2: { key3: { } } } })).toBeUndefined();
+	});
+
 
 
 
